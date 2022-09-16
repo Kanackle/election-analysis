@@ -33,6 +33,15 @@ winning_candidate = ""
 winning_count = 0
 winning_percentage = 0
 
+#initialize counties list
+county_list=[]
+#initialize counties dictionary
+counties_info = {}
+#counties variables
+winning_county = ""
+winning_county_count = 0
+winning_county_per = 0
+
 with open(file_to_load) as election_data:
     file_reader = csv.reader(election_data)
 
@@ -42,11 +51,17 @@ with open(file_to_load) as election_data:
     for row in file_reader:
         total_votes +=1
         candidate_name=row[2]
+        county_name=row[1]
 
         if candidate_name not in candidate_options:
             candidate_options.append(candidate_name)
             candidate_votes[candidate_name] = 0
         candidate_votes[candidate_name] += 1
+
+        if county_name not in county_list:
+            county_list.append(county_name)
+            counties_info[county_name] = 0
+        counties_info[county_name] += 1
 
     with open(file_to_save, "w") as txt_file:
         election_results = (
@@ -57,6 +72,27 @@ with open(file_to_load) as election_data:
         )
         print(election_results, end="")
         txt_file.write(election_results)
+
+        for county_name in counties_info:
+            county_votes = counties_info[county_name]
+            county_percentage = float(county_votes/total_votes * 100)
+
+            if(county_votes > winning_county_count) and (county_percentage > winning_county_per):
+                winning_county_count = county_votes
+                winning_county_per = county_percentage
+                winning_county = county_name
+            county_results=(
+                f'{county_name}: {county_percentage:.1f}% ({county_votes:,})\n'
+            )
+            print(county_results)
+            txt_file.write(county_results)
+        winning_county_summary = (
+            f"----------\n"
+            f"Largest County Turnout: {winning_county}\n"
+            f"----------\n"
+        )
+        txt_file.write(winning_county_summary)
+        print(winning_county_summary)
 
         for candidate_name in candidate_votes:
             votes = candidate_votes[candidate_name]
