@@ -53,6 +53,7 @@ with open(file_to_load) as election_data:
         candidate_name=row[2]
         county_name=row[1]
 
+    #Adding only unique names to list
         if candidate_name not in candidate_options:
             candidate_options.append(candidate_name)
             candidate_votes[candidate_name] = 0
@@ -73,6 +74,7 @@ with open(file_to_load) as election_data:
         print(election_results, end="")
         txt_file.write(election_results)
 
+    #Adding county info to dictionary
         for county_name in counties_info:
             county_votes = counties_info[county_name]
             county_percentage = float(county_votes/total_votes * 100)
@@ -94,6 +96,7 @@ with open(file_to_load) as election_data:
         txt_file.write(winning_county_summary)
         print(winning_county_summary)
 
+    #Adding candidate info to dictionary
         for candidate_name in candidate_votes:
             votes = candidate_votes[candidate_name]
             vote_percentage = float(votes/ total_votes * 100)
